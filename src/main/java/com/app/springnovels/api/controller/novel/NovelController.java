@@ -28,7 +28,7 @@ public class NovelController {
         return ResponseEntity.ok(novelResponse);
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<List<NovelResponse>> getNovels() {
         List<NovelResponse> allNovels = novelService.getAllNovels();
 

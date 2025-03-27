@@ -147,7 +147,7 @@ class NovelControllerTest extends ControllerTestSupport {
         given(novelService.getAllNovels()).willReturn(mockNovels);
 
         // then
-        mockMvc.perform(get("/api/v1/novels").with(csrf()))
+        mockMvc.perform(get("/api/v1/novels/all").with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))

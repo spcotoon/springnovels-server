@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class SecurityContextService {
     public void setAuthentication(Claims claims, HttpServletRequest request) {
-        Long id = claims.get("sub", Long.class);
+        Long id = Long.parseLong(claims.get("sub", String.class));
         String email = claims.get("email", String.class);
         String displayName = claims.get("displayName", String.class);
         String authorities = claims.get("authority", String.class);

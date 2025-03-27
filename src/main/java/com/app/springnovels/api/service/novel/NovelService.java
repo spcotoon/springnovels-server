@@ -1,5 +1,6 @@
 package com.app.springnovels.api.service.novel;
 
+import com.app.springnovels.api.exception.NotEnoughCoinException;
 import com.app.springnovels.api.exception.NotExistAuthorException;
 import com.app.springnovels.api.exception.NotExistNovelException;
 import com.app.springnovels.api.service.novel.request.NovelCreateServiceRequest;
@@ -48,7 +49,14 @@ public class NovelService {
         Novel novel = novelRepository.findByIdWithLock(novelId).orElseThrow(NotExistNovelException::new);
         Member member = memberRepository.findById(memberId).orElseThrow();
         Author author = authorRepository.findById(novel.getAuthor().getId()).orElseThrow();
-        Integer paidCoin = member.payCoin(1);
+
+        int payCoin = 1;
+
+        if (member.getCoin() < payCoin) {
+            throw new NotEnoughCoinException();
+        }
+
+        Integer paidCoin = member.payCoin(payCoin);
         author.addSalesCoin(paidCoin);
         novel.addViewCount();
 

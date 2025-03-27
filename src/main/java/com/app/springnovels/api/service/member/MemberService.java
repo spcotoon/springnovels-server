@@ -5,6 +5,7 @@ import com.app.springnovels.api.controller.member.requestDto.MemberCreateRequest
 import com.app.springnovels.api.exception.AlreadyExistsEmailException;
 import com.app.springnovels.api.exception.AlreadyExistsNicknameException;
 import com.app.springnovels.api.exception.InvalidSignInException;
+import com.app.springnovels.api.exception.NotExistMemberException;
 import com.app.springnovels.api.service.member.request.MemberCreateServiceRequest;
 import com.app.springnovels.api.service.member.request.MemberLoginServiceRequest;
 import com.app.springnovels.api.service.member.response.MemberResponse;
@@ -53,6 +54,11 @@ public class MemberService {
         Member savedMember = memberRepository.save(member);
 
         return MemberResponse.from(savedMember);
+    }
+
+    public MemberResponse getMe(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotExistMemberException::new);
+        return MemberResponse.from(member);
     }
 
     public Authentication authenticateJwtUser(MemberLoginServiceRequest request) {

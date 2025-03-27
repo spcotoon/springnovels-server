@@ -1,6 +1,7 @@
 package com.app.springnovels.api.service.novel;
 
 import com.app.springnovels.IntegrationTestSupport;
+import com.app.springnovels.api.exception.NotEnoughCoinException;
 import com.app.springnovels.api.service.novel.request.NovelCreateServiceRequest;
 import com.app.springnovels.api.service.novel.response.NovelResponse;
 import com.app.springnovels.domain.author.Author;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class NovelServiceTest extends IntegrationTestSupport {
 
@@ -287,9 +289,52 @@ class NovelServiceTest extends IntegrationTestSupport {
                 savedMember.getId(),
                 9
         );
+    }
+
+    @DisplayName("novelId로 한 작품을 불러올 때 멤버의 코인이 부족하면 예외가 발생하고 코인 증감은 없다.")
+    @Test
+    void getNovelWithNotEnoughCoin() throws Exception {
+        //given
+        Member member = Member.builder()
+                .email("a@a.com")
+                .password("1234")
+                .nickname("테스터")
+                .build();
+        member.addCoin(0);
+
+        Author author = Author.builder()
+                .email("a@spring.novels.author")
+                .password("1234")
+                .penName("a작가")
+                .build();
+
+
+        Member savedMember = memberRepository.save(member);
+        Author savedAuthor = authorRepository.save(author);
+
+        Novel novel = createNovel("1화", Genre.DRAMA, savedAuthor, "내용");
+
+        Novel savedNovel = novelRepository.save(novel);
+
+
+
+        //when
+        //then
+        assertThatThrownBy(() -> novelService.getNovel(savedNovel.getId(), savedMember.getId()))
+                .isInstanceOf(NotEnoughCoinException.class)
+                .hasMessage("코인이 부족합니다.");
+
+        Novel updatedNovel = novelRepository.findById(savedNovel.getId()).orElseThrow();
+        Author updatedAuthor = authorRepository.findById(savedAuthor.getId()).orElseThrow();
+        Member updatedMember = memberRepository.findById(savedMember.getId()).orElseThrow();
+
+        assertThat(updatedNovel.getViewCount()).isEqualTo(0);
+        assertThat(updatedAuthor.getSalesCoin()).isEqualTo(0);
+        assertThat(updatedMember.getCoin()).isEqualTo(0);
 
 
     }
+
 
 
 

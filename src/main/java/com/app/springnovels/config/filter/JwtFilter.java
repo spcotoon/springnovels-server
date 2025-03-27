@@ -37,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
             "/member/login",
             "/member/join",
             "/member/logout",
+            "/api/v1/novels/all",
             "/health",
             "/h2-console"
     );

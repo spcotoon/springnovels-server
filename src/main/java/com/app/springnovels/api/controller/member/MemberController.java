@@ -5,6 +5,7 @@ import com.app.springnovels.api.controller.member.requestDto.MemberLoginRequest;
 import com.app.springnovels.api.exception.InvalidEmailException;
 import com.app.springnovels.api.service.member.MemberService;
 import com.app.springnovels.api.service.member.response.MemberResponse;
+import com.app.springnovels.config.auth.CustomUser;
 import com.app.springnovels.config.auth.JwtProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,10 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,10 +47,23 @@ public class MemberController {
         return ResponseEntity.ok(value);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<MemberResponse> me() {
+
+        MemberResponse response = memberService.getMe(getCurrentUserId());
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         JwtProvider.deleteCookie(response, "accessToken");
 
         return ResponseEntity.ok("logout");
+    }
+
+    private Long getCurrentUserId() {
+        CustomUser customUser = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return customUser.getId();
     }
 }

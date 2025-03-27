@@ -90,6 +90,7 @@ public class JwtProvider {
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60 * 1000);
         cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(true);
         return cookie;
     }
 
