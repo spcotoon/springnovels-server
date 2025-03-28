@@ -14,6 +14,9 @@ import com.app.springnovels.domain.novel.NovelRepository;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,11 +44,13 @@ public class NovelService {
         return NovelResponse.from(savedNovel);
     }
 
-    public List<NovelResponse> getAllNovels() {
+    public Page<NovelResponse> getAllNovels(int pageNum) {
 
-        List<Novel> novels = novelRepository.findAll();
+        int pageSize = 20;
 
-        return novels.stream().map(NovelResponse::from).collect(Collectors.toList());
+        Pageable requestPageable = PageRequest.of(pageNum, pageSize);
+
+        return novelRepository.findNovelListByPageable(requestPageable);
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.app.springnovels.api.service.novel.response;
 import com.app.springnovels.domain.author.Author;
 import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.domain.novel.Novel;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -22,7 +23,8 @@ public class NovelResponse {
     private int viewCount;
 
     @Builder
-    private NovelResponse(Long id, String title, Genre genre, String penName, Long authorId, String content, LocalDateTime createdDateTime, int viewCount) {
+    @QueryProjection
+    public NovelResponse(Long id, String title, Genre genre, String penName, Long authorId, String content, LocalDateTime createdDateTime, int viewCount) {
         this.id = id;
         this.title = title;
         this.genre = genre;

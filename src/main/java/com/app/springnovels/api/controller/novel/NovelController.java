@@ -6,6 +6,7 @@ import com.app.springnovels.api.service.novel.response.NovelResponse;
 import com.app.springnovels.config.auth.CustomUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,10 @@ public class NovelController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<NovelResponse>> getNovels() {
-        List<NovelResponse> allNovels = novelService.getAllNovels();
-
-        return ResponseEntity.of(Optional.ofNullable(allNovels));
+    public ResponseEntity<PagedModel<NovelResponse>> getNovels(
+            @RequestParam(name = "page", defaultValue = "0") int pageNum
+            ) {
+        return ResponseEntity.ok(new PagedModel<>(novelService.getAllNovels(pageNum)));
     }
 
     @GetMapping("/{novelId}")

@@ -14,6 +14,10 @@ import com.app.springnovels.mock.MockMemberSecurityContextFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -147,16 +151,21 @@ class NovelControllerTest extends ControllerTestSupport {
                         .createdDateTime(LocalDateTime.now())
                         .build()
         );
+        int pageNum = 0;
+        int pageSize = 20;
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Page<NovelResponse> mockPage = new PageImpl<>(mockNovels, pageable, mockNovels.size());
 
-        given(novelService.getAllNovels()).willReturn(mockNovels);
+        given(novelService.getAllNovels(pageNum)).willReturn(mockPage);
+
 
         // then
         mockMvc.perform(get("/api/v1/novels/all").with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].title").value("1화"))
-                .andExpect(jsonPath("$[1].title").value("2화"));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].title").value("1화"))
+                .andExpect(jsonPath("$.content[1].title").value("2화"));
     }
 
     @DisplayName("소설의 아이디로 작품 하나를 불러온다")

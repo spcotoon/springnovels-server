@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -120,7 +121,7 @@ class NovelServiceTest extends IntegrationTestSupport {
          novelRepository.saveAll(List.of(novel1, novel2, novel3, novel4, novel5, novel6));
 
          //when
-         List<NovelResponse> result = novelService.getAllNovels();
+         Page<NovelResponse> result = novelService.getAllNovels(0);
 
          //then
          assertThat(result).hasSize(6);
