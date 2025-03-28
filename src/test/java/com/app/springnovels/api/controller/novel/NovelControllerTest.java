@@ -6,11 +6,14 @@ import com.app.springnovels.api.service.auth.SecurityContextService;
 import com.app.springnovels.api.service.novel.request.NovelCreateServiceRequest;
 import com.app.springnovels.api.service.novel.response.NovelResponse;
 import com.app.springnovels.domain.author.Author;
+import com.app.springnovels.domain.member.Member;
 import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.mock.MockAuthor;
 import com.app.springnovels.mock.MockMember;
+import com.app.springnovels.mock.MockMemberSecurityContextFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -155,32 +159,27 @@ class NovelControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$[1].title").value("2화"));
     }
 
-    @DisplayName("업로드된 소설들의 리스트를 불러온다")
+    @DisplayName("소설의 아이디로 작품 하나를 불러온다")
     @Test
-    @MockAuthor
+    @MockMember
     void getNovelById() throws Exception {
         // given
-        List<NovelResponse> mockNovels = List.of(
-                NovelResponse.builder()
-                        .id(1L)
-                        .title("1화")
-                        .genre(Genre.DRAMA)
-                        .authorId(1L)
-                        .content("내용")
-                        .createdDateTime(LocalDateTime.now())
-                        .build(),
-                NovelResponse.builder()
-                        .id(2L)
-                        .title("2화")
-                        .genre(Genre.DRAMA)
-                        .authorId(2L)
-                        .content("내용")
-                        .createdDateTime(LocalDateTime.now())
-                        .build()
-        );
+        NovelResponse mockNovel = NovelResponse.builder()
+                .id(1L)
+                .title("1화")
+                .genre(Genre.DRAMA)
+                .authorId(1L)
+                .content("내용")
+                .createdDateTime(LocalDateTime.now())
+                .viewCount(1)
+                .build();
 
-        given(novelService.getNovel(1L,1L)).willReturn(mockNovels.get(0));
+        given(novelService.getNovel(anyLong(), anyLong(), any(LocalDateTime.class))).willReturn(mockNovel);
 
+        NovelResponse result = novelService.getNovel(1L, 1L, LocalDateTime.now());
+        System.out.println(result);
+
+        // when
         // then
         mockMvc.perform(get("/api/v1/novels/1").with(csrf()))
                 .andDo(print())

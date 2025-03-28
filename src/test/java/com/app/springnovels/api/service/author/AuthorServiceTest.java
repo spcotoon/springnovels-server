@@ -11,6 +11,7 @@ import com.app.springnovels.domain.author.AuthorRepository;
 import com.app.springnovels.domain.member.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ class AuthorServiceTest extends IntegrationTestSupport {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @AfterEach
+    @BeforeEach
     void tearDown() {
         authorRepository.deleteAll();
     }

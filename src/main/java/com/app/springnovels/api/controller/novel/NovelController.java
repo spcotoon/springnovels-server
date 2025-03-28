@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,8 @@ public class NovelController {
     @GetMapping("/{novelId}")
     public ResponseEntity<NovelResponse> getNovelBy(@PathVariable("novelId") Long novelId) {
         Long memberId = getCurrentUserId();
-        NovelResponse novelResponse = novelService.getNovel(novelId, memberId);
+        LocalDateTime purchaseDateTime = LocalDateTime.now();
+        NovelResponse novelResponse = novelService.getNovel(novelId, memberId,purchaseDateTime);
         return ResponseEntity.ok(novelResponse);
     }
 

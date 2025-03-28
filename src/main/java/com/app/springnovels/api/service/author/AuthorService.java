@@ -1,15 +1,14 @@
 package com.app.springnovels.api.service.author;
 
-import com.app.springnovels.api.exception.AlreadyExistsEmailException;
-import com.app.springnovels.api.exception.AlreadyExistsNicknameException;
-import com.app.springnovels.api.exception.InvalidEmailException;
-import com.app.springnovels.api.exception.InvalidSignInException;
+import com.app.springnovels.api.exception.*;
 import com.app.springnovels.api.service.author.request.AuthorCreateServiceRequest;
 import com.app.springnovels.api.service.author.request.AuthorLoginServiceRequest;
 import com.app.springnovels.api.service.author.response.AuthorResponse;
 import com.app.springnovels.api.service.member.request.MemberLoginServiceRequest;
+import com.app.springnovels.api.service.member.response.MemberResponse;
 import com.app.springnovels.domain.author.Author;
 import com.app.springnovels.domain.author.AuthorRepository;
+import com.app.springnovels.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,6 +48,12 @@ public class AuthorService {
         Author savedAuthor = authorRepository.save(author);
 
         return AuthorResponse.from(savedAuthor);
+    }
+
+
+    public AuthorResponse getMe(Long authorId) {
+        Author member = authorRepository.findById(authorId).orElseThrow(NotExistMemberException::new);
+        return AuthorResponse.from(member);
     }
 
 

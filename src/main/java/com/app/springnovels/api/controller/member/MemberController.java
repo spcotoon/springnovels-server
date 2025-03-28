@@ -42,9 +42,8 @@ public class MemberController {
 
         Cookie cookie = JwtProvider.createCookie("accessToken", accessToken);
         response.addCookie(cookie);
-        String value = cookie.getValue();
 
-        return ResponseEntity.ok(value);
+        return ResponseEntity.ok("login");
     }
 
     @GetMapping("/me")

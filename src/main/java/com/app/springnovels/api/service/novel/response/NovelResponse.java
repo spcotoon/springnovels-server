@@ -5,6 +5,7 @@ import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.domain.novel.Novel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 

@@ -1,16 +1,17 @@
 package com.app.springnovels.domain.member;
 
 import com.app.springnovels.api.exception.CoinDeficiencyException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.app.springnovels.domain.novel.Novel;
+import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +20,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     private String email;
@@ -32,6 +34,9 @@ public class Member {
     private LocalDateTime deletedAt;
 
     private Integer coin;
+
+    @OneToMany(mappedBy = "member")
+    private List<PurchaseHistory> purchaseHistories = new ArrayList<>();
 
     @Builder
     private Member(String email, String password, String nickname) {

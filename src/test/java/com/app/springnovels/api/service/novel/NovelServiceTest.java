@@ -11,11 +11,14 @@ import com.app.springnovels.domain.member.MemberRepository;
 import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.domain.novel.Novel;
 import com.app.springnovels.domain.novel.NovelRepository;
+import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
+import com.app.springnovels.domain.purchaseHistory.PurchaseHistoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -39,8 +42,12 @@ class NovelServiceTest extends IntegrationTestSupport {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    PurchaseHistoryRepository purchaseHistoryRepository;
+
     @AfterEach
     void tearDown() {
+        purchaseHistoryRepository.deleteAll();
         novelRepository.deleteAll();
         authorRepository.deleteAll();
         memberRepository.deleteAll();
@@ -155,7 +162,7 @@ class NovelServiceTest extends IntegrationTestSupport {
         List<Novel> novels = novelRepository.saveAll(List.of(novel1, novel2, novel3, novel4, novel5, novel6));
 
         //when
-        NovelResponse result = novelService.getNovel(novels.get(0).getId(), savedMember.getId());
+        NovelResponse result = novelService.getNovel(novels.get(0).getId(), savedMember.getId(), LocalDateTime.now());
 
         //then
         assertThat(result).extracting(
@@ -209,7 +216,7 @@ class NovelServiceTest extends IntegrationTestSupport {
         List<Novel> novels = novelRepository.saveAll(List.of(novel1, novel2, novel3, novel4, novel5, novel6));
 
         //when
-        NovelResponse result = novelService.getNovel(novels.get(0).getId(), savedMember.getId());
+        NovelResponse result = novelService.getNovel(novels.get(0).getId(), savedMember.getId(), LocalDateTime.now());
 
         //then
         assertThat(result).extracting(
@@ -254,7 +261,7 @@ class NovelServiceTest extends IntegrationTestSupport {
 
         Novel savedNovel = novelRepository.save(novel);
 
-        novelService.getNovel(savedNovel.getId(), savedMember.getId());
+        novelService.getNovel(savedNovel.getId(), savedMember.getId(), LocalDateTime.now());
 
         Novel updatedNovel = novelRepository.findById(savedNovel.getId()).orElseThrow();
         Author updatedAuthor = authorRepository.findById(savedAuthor.getId()).orElseThrow();
@@ -291,6 +298,116 @@ class NovelServiceTest extends IntegrationTestSupport {
         );
     }
 
+
+    @DisplayName("novelId로 한 작품을 불러올 때 이미 코인을 사용해 열람한 게시글에는 구매 히스토리를 추가한다")
+    @Test
+    void getNovelAddHistory() throws Exception {
+        //given
+        Member member = Member.builder()
+                .email("a@a.com")
+                .password("1234")
+                .nickname("테스터")
+                .build();
+        member.addCoin(10);
+
+        Author author = Author.builder()
+                .email("a@spring.novels.author")
+                .password("1234")
+                .penName("a작가")
+                .build();
+
+
+        Member savedMember = memberRepository.save(member);
+        Author savedAuthor = authorRepository.save(author);
+
+        Novel novel = createNovel("1화", Genre.DRAMA, savedAuthor, "내용");
+
+        Novel savedNovel = novelRepository.save(novel);
+
+        LocalDateTime purchaseDate = LocalDateTime.of(2025, 3, 29, 1, 28);
+
+        novelService.getNovel(savedNovel.getId(), savedMember.getId(), purchaseDate);
+
+        PurchaseHistory purchaseHistory = purchaseHistoryRepository.findByMemberIdAndNovelId(savedMember.getId(), savedNovel.getId()).orElseThrow();
+
+        //when
+        //then
+        assertThat(purchaseHistory).extracting(
+                "id",
+                "member.id",
+                "novel.id",
+                "purchaseDate",
+                "isRead"
+        ).contains(
+                purchaseHistory.getId(),
+                savedMember.getId(),
+                savedNovel.getId(),
+                purchaseDate,
+                true
+        );
+    }
+
+    @DisplayName("novelId로 한 작품을 불러올 때 구매이력이 있는 작품은 코인증감과 조회수증가가 없다.")
+    @Test
+    void getNovelAddViewCountAndCoinTwoTimes() throws Exception {
+        //given
+        Member member = Member.builder()
+                .email("a@a.com")
+                .password("1234")
+                .nickname("테스터")
+                .build();
+        member.addCoin(10);
+
+        Author author = Author.builder()
+                .email("a@spring.novels.author")
+                .password("1234")
+                .penName("a작가")
+                .build();
+
+
+        Member savedMember = memberRepository.save(member);
+        Author savedAuthor = authorRepository.save(author);
+
+        Novel novel = createNovel("1화", Genre.DRAMA, savedAuthor, "내용");
+
+        Novel savedNovel = novelRepository.save(novel);
+
+        LocalDateTime purchaseDate = LocalDateTime.of(2025, 3, 29, 1, 28);
+        LocalDateTime secondView = LocalDateTime.of(2025, 3, 29, 1, 29);
+
+        novelService.getNovel(savedNovel.getId(), savedMember.getId(), purchaseDate);
+
+        novelService.getNovel(savedNovel.getId(), savedMember.getId(), secondView);
+
+        PurchaseHistory purchaseHistory = purchaseHistoryRepository.findByMemberIdAndNovelId(savedMember.getId(), savedNovel.getId()).orElseThrow();
+
+        Member updatedMember = memberRepository.findById(savedMember.getId()).orElseThrow();
+        Author updatedAuthor = authorRepository.findById(savedAuthor.getId()).orElseThrow();
+        Novel updatedNovel = novelRepository.findById(savedNovel.getId()).orElseThrow();
+
+        //when
+        //then
+        assertThat(purchaseHistory).extracting(
+                "id",
+                "member.id",
+                "novel.id",
+                "purchaseDate",
+                "isRead"
+        ).contains(
+                purchaseHistory.getId(),
+                savedMember.getId(),
+                savedNovel.getId(),
+                purchaseDate,
+                true
+        );
+
+        assertThat(updatedNovel.getViewCount()).isEqualTo(1);
+        assertThat(updatedAuthor.getSalesCoin()).isEqualTo(1);
+        assertThat(updatedMember.getCoin()).isEqualTo(9);
+    }
+
+
+
     @DisplayName("novelId로 한 작품을 불러올 때 멤버의 코인이 부족하면 예외가 발생하고 코인 증감은 없다.")
     @Test
     void getNovelWithNotEnoughCoin() throws Exception {
@@ -320,7 +437,7 @@ class NovelServiceTest extends IntegrationTestSupport {
 
         //when
         //then
-        assertThatThrownBy(() -> novelService.getNovel(savedNovel.getId(), savedMember.getId()))
+        assertThatThrownBy(() -> novelService.getNovel(savedNovel.getId(), savedMember.getId(), LocalDateTime.now()))
                 .isInstanceOf(NotEnoughCoinException.class)
                 .hasMessage("코인이 부족합니다.");
 
@@ -372,7 +489,7 @@ class NovelServiceTest extends IntegrationTestSupport {
 
             executorService.submit(() -> {
                 try {
-                    novelService.getNovel(savedNovel.getId(), savedMember.getId());
+                    novelService.getNovel(savedNovel.getId(), savedMember.getId(), LocalDateTime.now());
                 } finally {
                     latch.countDown();
                 }
@@ -435,7 +552,7 @@ class NovelServiceTest extends IntegrationTestSupport {
 
             executorService.submit(() -> {
                 try {
-                    novelService.getNovel(savedNovel.getId(), savedMember.getId());
+                    novelService.getNovel(savedNovel.getId(), savedMember.getId(), LocalDateTime.now());
                 } finally {
                     latch.countDown();
                 }
