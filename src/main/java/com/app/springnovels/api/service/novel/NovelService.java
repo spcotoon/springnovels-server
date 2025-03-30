@@ -14,6 +14,7 @@ import com.app.springnovels.domain.novel.NovelRepository;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class NovelService {
 
     private final NovelRepository novelRepository;
@@ -65,6 +67,7 @@ public class NovelService {
             int payCoin = 1;
 
             if (member.getCoin() < payCoin) {
+                log.warn("Not enough coins. memberId={}, currentCoins={}, requiredCoins={}", memberId, member.getCoin(), payCoin);
                 throw new NotEnoughCoinException();
             }
 
@@ -79,6 +82,7 @@ public class NovelService {
                     .isRead(true)
                     .build();
 
+            log.info("Saving new purchase history. memberId={}, novelId={}, purchaseDateTime={}", memberId, novelId, purchaseDateTime);
             purchaseHistoryRepository.save(newPurchaseHistory);
         } else if (purchaseHistory.get().isRead()) {
             return NovelResponse.from(novel);
