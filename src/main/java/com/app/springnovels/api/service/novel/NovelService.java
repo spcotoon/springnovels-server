@@ -57,6 +57,7 @@ public class NovelService {
 
     @Transactional
     public NovelResponse getNovel(Long novelId, Long memberId, LocalDateTime purchaseDateTime) {
+        log.info("request: {}", memberId);
         Novel novel = novelRepository.findByIdWithLock(novelId).orElseThrow(NotExistNovelException::new);
         Member member = memberRepository.findById(memberId).orElseThrow();
         Author author = authorRepository.findById(novel.getAuthor().getId()).orElseThrow();

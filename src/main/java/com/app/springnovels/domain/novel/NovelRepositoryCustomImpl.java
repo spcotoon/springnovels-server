@@ -34,8 +34,7 @@ public class NovelRepositoryCustomImpl implements NovelRepositoryCustom {
                         novel.viewCount
                 ))
                 .from(novel)
-                .join(author)
-                .on(novel.author.eq(author))
+                .leftJoin(novel.author, author)
                 .orderBy(novel.createdDateTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
