@@ -1,7 +1,6 @@
 package com.app.springnovels.api.controller.author.requestDto;
 
 import com.app.springnovels.api.service.author.request.AuthorLoginServiceRequest;
-import com.app.springnovels.api.service.member.request.MemberLoginServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -3,6 +3,8 @@ package com.app.springnovels.domain.novel;
 import com.app.springnovels.api.service.novel.response.NovelResponse;
 import com.app.springnovels.api.service.novel.response.QNovelResponse;
 import com.app.springnovels.domain.author.QAuthor;
+import com.app.springnovels.domain.member.QMember;
+import com.app.springnovels.domain.purchaseHistory.QPurchaseHistory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ public class NovelRepositoryCustomImpl implements NovelRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
     private final QNovel novel = QNovel.novel;
     private final QAuthor author = QAuthor.author;
+    private final QMember member = QMember.member;
+    private final QPurchaseHistory purchaseHistory = QPurchaseHistory.purchaseHistory;
 
     @Override
     public Page<NovelResponse> findNovelListByPageable(Pageable pageable) {
@@ -46,4 +50,5 @@ public class NovelRepositoryCustomImpl implements NovelRepositoryCustom {
 
         return PageableExecutionUtils.getPage(novelResponses, pageable, countQuery::fetchOne);
     }
+
 }

@@ -2,14 +2,13 @@ package com.app.springnovels;
 
 import com.app.springnovels.api.controller.member.MemberController;
 import com.app.springnovels.api.controller.novel.NovelController;
+import com.app.springnovels.api.facade.RedissonLockNovelFacade;
 import com.app.springnovels.api.service.auth.JwtService;
 import com.app.springnovels.api.service.auth.SecurityContextService;
 import com.app.springnovels.api.service.member.MemberService;
 import com.app.springnovels.api.service.novel.NovelService;
 import com.app.springnovels.config.CorsConfig;
 import com.app.springnovels.config.SecurityConfig;
-import com.app.springnovels.config.auth.JwtProvider;
-import com.app.springnovels.config.auth.MultipleUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +29,8 @@ public abstract class ControllerTestSupport {
     @Autowired
     protected ObjectMapper objectMapper;
 
+    @MockitoBean
+    protected RedissonLockNovelFacade redissonLockNovelFacade;
     @MockitoBean
     protected NovelService novelService;
     @MockitoBean

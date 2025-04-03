@@ -1,7 +1,6 @@
 package com.app.springnovels.api.service.member;
 
 
-import com.app.springnovels.api.controller.member.requestDto.MemberCreateRequest;
 import com.app.springnovels.api.exception.AlreadyExistsEmailException;
 import com.app.springnovels.api.exception.AlreadyExistsNicknameException;
 import com.app.springnovels.api.exception.InvalidSignInException;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,11 +1,8 @@
 package com.app.springnovels.api.controller.author;
 
 import com.app.springnovels.api.controller.author.requestDto.AuthorCreateRequest;
-import com.app.springnovels.api.controller.member.requestDto.MemberCreateRequest;
 import com.app.springnovels.api.service.author.AuthorService;
-import com.app.springnovels.api.service.member.MemberService;
 import com.app.springnovels.domain.author.AuthorRepository;
-import com.app.springnovels.domain.member.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

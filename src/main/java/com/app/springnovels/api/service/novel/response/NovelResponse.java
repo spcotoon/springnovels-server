@@ -1,12 +1,10 @@
 package com.app.springnovels.api.service.novel.response;
 
-import com.app.springnovels.domain.author.Author;
 import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.domain.novel.Novel;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 

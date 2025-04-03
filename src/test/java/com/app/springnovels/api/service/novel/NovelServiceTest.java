@@ -21,10 +21,6 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -236,6 +232,9 @@ class NovelServiceTest extends IntegrationTestSupport {
                 1
         );
     }
+
+
+
 
     @DisplayName("novelId로 한 작품을 불러올 때 멤버의 코인은 소모되고 작가의 코인은 증가된다.")
     @Test
@@ -453,9 +452,7 @@ class NovelServiceTest extends IntegrationTestSupport {
 
     }
 
-
-
-
+    /* Pessimistic Lock -> Redisson Lock 으로 변경되었음
 
     @DisplayName("novelId로 한 작품을 불러올 때, 100명이 조회하면 증가된 조회수는 100이다.")
     @Test
@@ -519,7 +516,6 @@ class NovelServiceTest extends IntegrationTestSupport {
         );
     }
 
-
     @DisplayName("novelId로 한 작품을 불러올 때, 100명이 조회하면 작가는 100개의 코인을 얻는다.")
     @Test
     void getNovelAddCoin() throws Exception {
@@ -578,6 +574,7 @@ class NovelServiceTest extends IntegrationTestSupport {
         );
     }
 
+     */
 
     private static Novel createNovel(String title, Genre genre, Author author, String content) {
         return Novel.builder()

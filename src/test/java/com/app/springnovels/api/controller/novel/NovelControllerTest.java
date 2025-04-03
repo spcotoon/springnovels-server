@@ -2,25 +2,19 @@ package com.app.springnovels.api.controller.novel;
 
 import com.app.springnovels.ControllerTestSupport;
 import com.app.springnovels.api.controller.novel.requestDto.NovelCreateRequest;
-import com.app.springnovels.api.service.auth.SecurityContextService;
 import com.app.springnovels.api.service.novel.request.NovelCreateServiceRequest;
 import com.app.springnovels.api.service.novel.response.NovelResponse;
-import com.app.springnovels.domain.author.Author;
-import com.app.springnovels.domain.member.Member;
 import com.app.springnovels.domain.novel.Genre;
 import com.app.springnovels.mock.MockAuthor;
 import com.app.springnovels.mock.MockMember;
-import com.app.springnovels.mock.MockMemberSecurityContextFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -183,7 +177,7 @@ class NovelControllerTest extends ControllerTestSupport {
                 .viewCount(1)
                 .build();
 
-        given(novelService.getNovel(anyLong(), anyLong(), any(LocalDateTime.class))).willReturn(mockNovel);
+        given(redissonLockNovelFacade.getNovel(anyLong(), anyLong(), any(LocalDateTime.class))).willReturn(mockNovel);
 
         NovelResponse result = novelService.getNovel(1L, 1L, LocalDateTime.now());
         System.out.println(result);

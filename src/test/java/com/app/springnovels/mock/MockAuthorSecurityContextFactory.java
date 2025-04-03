@@ -10,7 +10,6 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class MockAuthorSecurityContextFactory implements WithSecurityContextFactory<MockAuthor> {
     @Override

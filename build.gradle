@@ -29,6 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -50,6 +51,9 @@ dependencies {
 	//lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.41.0'
 
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

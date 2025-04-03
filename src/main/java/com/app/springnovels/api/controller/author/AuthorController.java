@@ -2,11 +2,9 @@ package com.app.springnovels.api.controller.author;
 
 import com.app.springnovels.api.controller.author.requestDto.AuthorCreateRequest;
 import com.app.springnovels.api.controller.author.requestDto.AuthorLoginRequest;
-import com.app.springnovels.api.controller.member.requestDto.MemberLoginRequest;
 import com.app.springnovels.api.exception.InvalidEmailException;
 import com.app.springnovels.api.service.author.AuthorService;
 import com.app.springnovels.api.service.author.response.AuthorResponse;
-import com.app.springnovels.api.service.member.response.MemberResponse;
 import com.app.springnovels.config.auth.CustomUser;
 import com.app.springnovels.config.auth.JwtProvider;
 import jakarta.servlet.http.Cookie;

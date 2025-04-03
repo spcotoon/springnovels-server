@@ -1,6 +1,7 @@
 package com.app.springnovels.api.controller.novel;
 
 import com.app.springnovels.api.controller.novel.requestDto.NovelCreateRequest;
+import com.app.springnovels.api.facade.RedissonLockNovelFacade;
 import com.app.springnovels.api.service.novel.NovelService;
 import com.app.springnovels.api.service.novel.response.NovelResponse;
 import com.app.springnovels.config.auth.CustomUser;
@@ -12,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ import java.util.Optional;
 public class NovelController {
 
     private final NovelService novelService;
+    private final RedissonLockNovelFacade redissonLockNovelFacade;
 
     @PostMapping("/new")
     public ResponseEntity<NovelResponse> createNovel(@Valid @RequestBody NovelCreateRequest request) {
@@ -41,7 +41,7 @@ public class NovelController {
     public ResponseEntity<NovelResponse> getNovelBy(@PathVariable("novelId") Long novelId) {
         Long memberId = getCurrentUserId();
         LocalDateTime purchaseDateTime = LocalDateTime.now();
-        NovelResponse novelResponse = novelService.getNovel(novelId, memberId,purchaseDateTime);
+        NovelResponse novelResponse = redissonLockNovelFacade.getNovel(novelId, memberId,purchaseDateTime);
         return ResponseEntity.ok(novelResponse);
     }
 

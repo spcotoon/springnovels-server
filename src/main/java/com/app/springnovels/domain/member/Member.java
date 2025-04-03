@@ -1,7 +1,6 @@
 package com.app.springnovels.domain.member;
 
 import com.app.springnovels.api.exception.CoinDeficiencyException;
-import com.app.springnovels.domain.novel.Novel;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

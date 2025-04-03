@@ -1,0 +1,15 @@
+ps aux | grep java
+pid 확인
+
+top -H -p 1234(pid)
+
+ps -L -o pid,tid,pcpu,cmd -p 1234(내 pid) --sort=-pcpu | head -n 20
+하면 tid 나옴
+
+Java 스레드 덤프에서 스레드는 16진수 (hexadecimal) 로 표시되므로, 찾은 TID를 16진수로 변환해야 한다.
+printf "%x\n" 5678(여긴 tid)
+예시 -> 303a 이게 tid
+
+jstack 1234(pid) > threaddump.txt
+
+grep -A 20 "nid=0x303a" threaddump.txt

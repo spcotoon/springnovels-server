@@ -1,6 +1,5 @@
 package com.app.springnovels.api.service.member.request;
 
-import com.app.springnovels.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 

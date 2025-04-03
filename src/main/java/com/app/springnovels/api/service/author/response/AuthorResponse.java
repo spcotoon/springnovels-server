@@ -1,8 +1,6 @@
 package com.app.springnovels.api.service.author.response;
 
-import com.app.springnovels.api.service.member.response.MemberResponse;
 import com.app.springnovels.domain.author.Author;
-import com.app.springnovels.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 

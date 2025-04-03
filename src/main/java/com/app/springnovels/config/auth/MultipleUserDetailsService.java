@@ -1,13 +1,11 @@
 package com.app.springnovels.config.auth;
 
 
-import com.app.springnovels.api.exception.InvalidEmailException;
 import com.app.springnovels.api.exception.InvalidSignInException;
 import com.app.springnovels.domain.author.Author;
 import com.app.springnovels.domain.author.AuthorRepository;
 import com.app.springnovels.domain.member.Member;
 import com.app.springnovels.domain.member.MemberRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

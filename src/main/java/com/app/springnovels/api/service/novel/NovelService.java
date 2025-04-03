@@ -18,20 +18,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
 public class NovelService {
+
 
     private final NovelRepository novelRepository;
     private final AuthorRepository authorRepository;
@@ -55,10 +53,11 @@ public class NovelService {
         return novelRepository.findNovelListByPageable(requestPageable);
     }
 
+
     @Transactional
     public NovelResponse getNovel(Long novelId, Long memberId, LocalDateTime purchaseDateTime) {
         log.info("request: {}", memberId);
-        Novel novel = novelRepository.findByIdWithLock(novelId).orElseThrow(NotExistNovelException::new);
+        Novel novel = novelRepository.findById(novelId).orElseThrow(NotExistNovelException::new);
         Member member = memberRepository.findById(memberId).orElseThrow();
         Author author = authorRepository.findById(novel.getAuthor().getId()).orElseThrow();
 
@@ -90,5 +89,6 @@ public class NovelService {
         }
         return NovelResponse.from(novel);
     }
+
 
 }
