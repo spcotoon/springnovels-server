@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface NovelRepositoryCustom {
     Page<NovelResponse> findNovelListByPageable(Pageable pageable);
+
+    NovelContextDto findNovelContextDto(Long novelId, Long memberId);
 }

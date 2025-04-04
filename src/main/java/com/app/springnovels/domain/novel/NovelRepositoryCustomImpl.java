@@ -5,6 +5,7 @@ import com.app.springnovels.api.service.novel.response.QNovelResponse;
 import com.app.springnovels.domain.author.QAuthor;
 import com.app.springnovels.domain.member.QMember;
 import com.app.springnovels.domain.purchaseHistory.QPurchaseHistory;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,30 @@ public class NovelRepositoryCustomImpl implements NovelRepositoryCustom {
                 .from(novel);
 
         return PageableExecutionUtils.getPage(novelResponses, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public NovelContextDto findNovelContextDto(Long novelId, Long memberId) {
+
+        Tuple tuple = jpaQueryFactory
+                .select(member, author, novel, purchaseHistory.isRead.coalesce(false))
+                .from(novel)
+                .join(novel.author, author).fetchJoin()
+                .leftJoin(purchaseHistory)
+                .on(purchaseHistory.novel.id.eq(novel.id)
+                        .and(purchaseHistory.member.id.eq(memberId)))
+                .join(member).on(member.id.eq(memberId)).fetchJoin()
+                .where(novel.id.eq(novelId))
+                .fetchOne();
+
+        if (tuple == null) return null;
+
+        return NovelContextDto.builder()
+                .author(tuple.get(author))
+                .member(tuple.get(member))
+                .isRead(tuple.get(purchaseHistory.isRead.coalesce(false)))
+                .novel(tuple.get(novel))
+                .build();
     }
 
 }

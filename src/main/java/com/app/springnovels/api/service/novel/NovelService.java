@@ -10,6 +10,7 @@ import com.app.springnovels.domain.author.AuthorRepository;
 import com.app.springnovels.domain.member.Member;
 import com.app.springnovels.domain.member.MemberRepository;
 import com.app.springnovels.domain.novel.Novel;
+import com.app.springnovels.domain.novel.NovelContextDto;
 import com.app.springnovels.domain.novel.NovelRepository;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistory;
 import com.app.springnovels.domain.purchaseHistory.PurchaseHistoryRepository;
@@ -55,7 +56,7 @@ public class NovelService {
 
 
     @Transactional
-    public NovelResponse getNovel(Long novelId, Long memberId, LocalDateTime purchaseDateTime) {
+    public NovelResponse getNovel2(Long novelId, Long memberId, LocalDateTime purchaseDateTime) {
         log.info("request: {}", memberId);
         Novel novel = novelRepository.findById(novelId).orElseThrow(NotExistNovelException::new);
         Member member = memberRepository.findById(memberId).orElseThrow();
@@ -90,5 +91,42 @@ public class NovelService {
         return NovelResponse.from(novel);
     }
 
+    @Transactional
+    public NovelResponse getNovel(Long novelId, Long memberId, LocalDateTime purchaseDateTime) {
+        log.info("request: {}", memberId);
+
+        NovelContextDto novelContextDto = novelRepository.findNovelContextDto(novelId, memberId);
+
+        Novel novel = novelContextDto.getNovel();
+        Member member = novelContextDto.getMember();
+        Author author = novelContextDto.getAuthor();
+        Boolean isRead = novelContextDto.getIsRead();
+
+        if (!isRead) {
+            int payCoin = 1;
+
+            if (member.getCoin() < payCoin) {
+                log.warn("Not enough coins. memberId={}, currentCoins={}, requiredCoins={}", memberId, member.getCoin(), payCoin);
+                throw new NotEnoughCoinException();
+            }
+
+            Integer paidCoin = member.payCoin(payCoin);
+            author.addSalesCoin(paidCoin);
+            novel.addViewCount();
+
+            PurchaseHistory newPurchaseHistory = PurchaseHistory.builder()
+                    .member(member)
+                    .novel(novel)
+                    .purchaseDate(purchaseDateTime)
+                    .isRead(true)
+                    .build();
+
+            log.info("Saving new purchase history. memberId={}, novelId={}, purchaseDateTime={}", memberId, novelId, purchaseDateTime);
+            purchaseHistoryRepository.save(newPurchaseHistory);
+        } else {
+            return NovelResponse.from(novel);
+        }
+        return NovelResponse.from(novel);
+    }
 
 }
